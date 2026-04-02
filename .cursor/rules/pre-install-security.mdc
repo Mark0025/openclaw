@@ -1,0 +1,114 @@
+---
+description: Pre-install npm security checklist — based on NetworkChuck Axios supply chain attack video
+alwaysApply: true
+---
+
+# Pre-Install npm Security Checklist
+
+**Source**: NetworkChuck — [npm supply chain hack](https://www.youtube.com/watch?v=eGSsoSEppNU)
+**Attack**: Axios supply chain attack — hacker hijacked lead maintainer account, injected malicious postinstall script
+
+---
+
+## How the Attack Works
+
+1. Attacker takes over a maintainer's npm account
+2. Publishes a new package version with a malicious `postinstall` script
+3. Script runs **automatically 1.1 seconds after `npm install`**
+4. Detects the OS, steals ALL environment variables (API keys, tokens, credentials)
+5. Sends them to attacker's server
+6. **Deletes itself** — evades static scanners
+
+You may never know it happened unless you check versions.
+
+---
+
+## Before Installing ANY npm Package
+
+```bash
+# 1. Check the exact version you're about to install
+npm info <package> version
+
+# 2. Check for postinstall/preinstall scripts (red flag)
+npm info <package> scripts
+
+# 3. Check npm audit AFTER install
+npm audit
+
+# 4. Verify the package owner hasn't recently changed
+npm info <package> maintainers
+```
+
+---
+
+## Check If You Were Infected (NetworkChuck's Method)
+
+```bash
+# Check your axios version — was it the compromised window?
+npm list axios
+npm list -g axios
+
+# Check ALL projects for axios
+find ~ -name "package.json" -not -path "*/node_modules/*" \
+  | xargs grep -l '"axios"' 2>/dev/null
+```
+
+If you were on a compromised version during the attack window:
+
+```bash
+# IMMEDIATELY rotate everything on that machine:
+# - Anthropic API key
+# - GitHub tokens
+# - AWS/GCP/Azure keys
+# - Database passwords
+# - Any .env values
+# - SSH keys generated on that machine
+```
+
+---
+
+## For This Project (OpenClaw)
+
+Before running `npm install -g openclaw`:
+
+```bash
+# 1. Verify the package exists and is legitimate
+npm info openclaw
+
+# 2. Check the publisher
+npm info openclaw maintainers
+
+# 3. Check scripts section — should have NO postinstall
+npm info openclaw scripts
+
+# 4. Check version history (no sudden version jumps)
+npm info openclaw time
+
+# 5. Run on an ISOLATED VPS (Hostinger) — not your Mac
+#    If compromised, only that server's env vars are at risk
+```
+
+---
+
+## Why Hostinger VPS is the Right Call
+
+Running `npm install -g openclaw` on a **fresh Hostinger VPS** instead of your Mac means:
+- Your Mac's API keys stay safe
+- Only the VPS env vars are at risk
+- Easy to nuke and rebuild if something goes wrong
+
+**Never run untrusted npm packages on your primary machine.**
+
+---
+
+## Remediation Checklist (If Compromised)
+
+- [ ] Rotate Anthropic API key
+- [ ] Rotate GitHub personal access tokens
+- [ ] Rotate all keys in `.env` files
+- [ ] Revoke and reissue SSH keys
+- [ ] Check git history for unexpected commits
+- [ ] Audit Docker containers for unexpected images
+- [ ] Check cron jobs: `crontab -l`
+- [ ] Check for new user accounts: `cat /etc/passwd`
+- [ ] Check listening ports: `ss -tlnp`

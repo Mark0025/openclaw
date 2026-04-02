@@ -1,0 +1,26 @@
+# OpenClaw project — keep secrets and runtime state out of git
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+config/secrets/
+
+# OpenClaw runtime state
+.openclaw/
+openclaw-data/
+sessions/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+*.swp
+
+# Logs
+logs/
+*.log
