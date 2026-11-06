@@ -1,5 +1,11 @@
 # OpenClaw on Hostinger
 
+## About
+- **What it is:** Setup notes for running OpenClaw, an open-source AI agent platform, on Mark's Hostinger server, following a NetworkChuck video.
+- **Business:** homelab
+- **Status:** inactive since 2026-04
+- **Source:** agent research 2026-11-04
+
 Mark's setup for running OpenClaw (open-source AI agent platform) on a Hostinger VPS.
 
 > **Video source**: [NetworkChuck — OpenClaw on Hostinger](https://www.youtube.com/watch?v=T-HZHO_PQPY)  
